@@ -65,7 +65,7 @@ class SquabblesClient:
         :param content: the content of the post in markdown format
         :returns: some kind of dict
             {
-            'hash_id': 'xxxxxxxx', # this can be used as a post_id to make a
+            'hash_id': 'xxxxxxxx', # this can be used as a hash_id to make a
                                    # top level reply
             ....
             }
@@ -79,11 +79,29 @@ class SquabblesClient:
         )
         return response.json()
 
-    def reply(self, post_id, content):
+    def reply(self, hash_id, content):
         """
-        :param post_id: a hash_id that identifies the post or comment
+        :param hash_id: a hash_id that identifies the post or comment
         :param content: the content of the comment in markdown format
         """
-        url = f"https://squabbles.io/api/posts/{post_id}/reply"
+        url = f"https://squabbles.io/api/posts/{hash_id}/reply"
         response = self.session.post(url, files={"content": (None, content)})
+        return response.json()
+
+    def comment_toggle_like(self, hash_id: str) -> dict:
+        """
+        :param hash_id: hash id identifying a comment like 'GJ3wVpPabN'
+        :returns: a dict containing the full comment details
+        """
+        url = f'https://squabbles.io/api/comments/{hash_id}/toggle-like'
+        response = self.session.post(url)
+        return response.json()
+
+    def post_toggle_like(self, hash_id: str) -> dict:
+        """
+        :param hash_id: hash id identifying a post like 'GJ3wVpPabN'
+        :returns: a dict containing the full comment details
+        """
+        url = f'https://squabbles.io/api/posts/{hash_id}/toggle-like'
+        response = self.session.post(url)
         return response.json()
