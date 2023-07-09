@@ -2,6 +2,7 @@
 afaik the entire api is entirely undocumented
 """
 import requests
+from .settings import Settings
 
 
 class SquabblesClient:
@@ -16,13 +17,18 @@ class SquabblesClient:
     def __init__(self):
         self.session = requests.Session()
 
-    def login(self, username: str, password: str):
+    def login(self, username: str = None, password: str = None):
         """the login sequence is straightforward:
         * obtain a CSRF token
         * use the CSRF token to get the cookie credentials from the login form
         * use the cookie credentials to get a bearer token
         * set the bearer token in the session headers
         """
+        settings = Settings()
+        if username is None:
+            username = settings.SQUABBLES_USERNAME
+        if password is None:
+            password = settings.SQUABBLES_PASSWORD
         token = self.session.get("https://squabbles.io/csrf-token").content
         form = {
             "_token": token,
